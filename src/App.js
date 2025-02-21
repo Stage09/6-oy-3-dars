@@ -1,6 +1,5 @@
-import burgerImage from "./images/burger.png";
-import { useState } from "react";
-import { Menu, X, ShoppingCart, DollarSign} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, ShoppingCart, DollarSign } from "lucide-react";
 import './App.css'
 
 function Navbar() {
@@ -16,10 +15,10 @@ function Navbar() {
           </button>
         </div>
         <ul className={`text-green-400 lg:flex gap-6 absolute lg:static top-16 left-0 w-full lg:w-auto lg:bg-transparent p-4 lg:p-0 transition-all ${isOpen ? "block" : "hidden"}`}>
-          <li><a href="https://6-oy-3-dars-green.vercel.app/" className="text-green hover:text-white-400 text-lg flex items-center"><Menu size={20} className="mr-2" />Меню</a></li>
-          <li><a href="https://6-oy-3-dars-green.vercel.app/" className="text-green hover:text-white-400 text-lg">О нас</a></li>
-          <li><a href="https://github.com/Stage09/6-oy-3-dars" className="text-green hover:text-white-400 text-lg">Контакты</a></li>
-          <li><a href="https://github.com/Stage09/6-oy-3-dars" className="text-green hover:text-white-400 text-lg flex items-center"><ShoppingCart size={20} className="mr-2"/> Корзина</a></li>
+          <li><a href="#" className="text-green hover:text-white-400 text-lg flex items-center"><Menu size={20} className="mr-2" />Меню</a></li>
+          <li><a href="#" className="text-green hover:text-white-400 text-lg">О нас</a></li>
+          <li><a href="#" className="text-green hover:text-white-400 text-lg">Контакты</a></li>
+          <li><a href="#" className="text-green hover:text-white-400 text-lg flex items-center"><ShoppingCart size={20} className="mr-2"/> Корзина</a></li>
         </ul>
       </div>
     </nav>
@@ -37,26 +36,34 @@ function HeroSection() {
   );
 }
 
-function ProductCard({ image, title, price, text }) {
+function ProductCard({ image, title, price }) {
   return (
-    <div className="p-4 rounded-lg items-center text-white shadow-lg hover:scale-105 transition-transform">
-      <img src={image} alt={title} className="object-cover rounded" />
+    <div className="p-4 rounded-lg items-center text-white shadow-lg hover:scale-105 transition-transform bg-gray-800">
+      <img src={image} alt={title} className="object-cover rounded h-40 w-full" />
       <p className="mt-2 font-bold text-lg">{title}</p>
-      <p className="text-green-400 text-xl font-semibold">{price}</p>
-      <p className="mt-2 w-300">{text}</p>
+      <p className="text-green-400 text-xl font-semibold">${price}</p>
       <button className="mt-3 bg-green-500 text-black py-2 px-5 rounded shadow-md">Добавить в корзину</button>
     </div>
   );
 }
 
 function ProductSection() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch("https://fakestoreapi.com/products?limit=20")
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(error => console.error("Ошибка загрузки данных:", error));
+  }, []);
+
   return (
     <section className="bg-black text-white py-16 px-4">
-      <h3 className="text-4xl font-bold text-green-400 text-center">Гамбургеры</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 container mx-auto">
-        <ProductCard image={burgerImage } title="С говядиной" price="14 500" text="Свежая хрустящая булочка, листики салата, маринованный огурец с луком и небольшая котлета, сдобренная майонезом и кетчупом"/>
-        <ProductCard image={burgerImage} title="С говядиной" price="14 500" text="Свежая хрустящая булочка, листики салата, маринованный огурец с луком и небольшая котлета, сдобренная майонезом и кетчупом"/>
-        <ProductCard image={burgerImage} title="С говядиной" price="14 500" text="Свежая хрустящая булочка, листики салата, маринованный огурец с луком и небольшая котлета, сдобренная майонезом и кетчупом"/>
+      <h3 className="text-4xl font-bold text-green-400 text-center">Наши товары</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8 container mx-auto">
+        {products.map(product => (
+          <ProductCard key={product.id} image={product.image} title={product.title} price={product.price} />
+        ))}
       </div>
     </section>
   );
